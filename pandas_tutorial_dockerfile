@@ -1,0 +1,20 @@
+FROM jupyter/datascience-notebook
+MAINTAINER Seth Paul
+
+USER root
+
+RUN apt-get update
+RUN apt-get -y install git-all
+RUN git clone https://github.com/jonathanrocher/pandas_tutorial.git /home/jovyan/SciPy_2015-2016_Pandas_tutorial
+RUN git clone https://github.com/jvns/pandas-cookbook/tree/master/cookbook /home/jovyan/Pandas_Cookbook
+RUN git clone https://github.com/jvns/pandas-cookbook/tree/master/cookbook /home/jovyan/Pandas_Cookbook
+
+RUN wget http://sethcpaul.com/wp-content/uploads/2016/09/custom.js
+RUN wget http://sethcpaul.com/wp-content/uploads/2016/09/custom.css
+RUN wget http://sethcpaul.com/wp-content/uploads/2016/09/Pandas-DataFrame-Notes.pdf
+RUN mv custom.css ~/.jupyter/custom/custom.css
+RUN mv custom.js ~/.jupyter/custom/custom.js
+
+USER $NB_USER
+
+WORKDIR /home/jovyan/
