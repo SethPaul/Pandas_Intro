@@ -7,8 +7,8 @@ RUN apt-get update
 RUN apt-get -y install git-all pip
 RUN git clone https://github.com/jonathanrocher/pandas_tutorial.git /home/jovyan/Resources/SciPy_2015-2016_Pandas_tutorial
 RUN git clone https://github.com/jvns/pandas-cookbook.git /home/jovyan/Resources/Pandas_Cookbook
-RUN git clone https://github.com/SethPaul/Pandas_Intro.git /home/joyvan/Utah_Data_Science_Pandas_Intro
-RUN git clone https://github.com/SethPaul/Pandas_Tutorial_from_PyCon2012_by_Wes_McKinney.git /home/joyvan/Resources/Pandas_Tutorial_from_PyCon2012
+RUN git clone https://github.com/SethPaul/Pandas_Intro.git /home/jovyan/Utah_Data_Science_Pandas_Intro
+RUN git clone https://github.com/SethPaul/Pandas_Tutorial_from_PyCon2012_by_Wes_McKinney.git /home/jovyan/Resources/Pandas_Tutorial_from_PyCon2012
 RUN pip install requests-futures
 
 RUN wget http://sethcpaul.com/wp-content/uploads/2016/09/Pandas-DataFrame-Notes.pdf -P /home/jovyan/Resources/
