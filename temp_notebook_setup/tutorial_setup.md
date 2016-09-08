@@ -35,7 +35,7 @@ $ sudo service docker start
 ```
 
 ## A simple example tempnb
-Get a docker iamge, in this case the minimal-notebook
+Get a docker image, in this case the jupyter/minimal-notebook
 ```bash
 $ docker pull jupyter/minimal-notebook
 ```
@@ -60,56 +60,52 @@ Start up the docker notebook images
 ##### Docker file
 We need to supply instructions to build the image. The instructions used for the tutorial image were:
 
-      "dockerfile"
-      FROM jupyter/all-spark-notebook
-      MAINTAINER Seth Paul
+        "dockerfile"
+        FROM jupyter/all-spark-notebook
+        MAINTAINER Seth Paul
 
-      USER root
+        USER root
 
-      RUN apt-get update
-      RUN apt-get -y install git-all
-      RUN git clone https://github.com/jonathanrocher/pandas_tutorial.git /home/jovyan/Resources/SciPy_2015-2016_Pandas_tutorial
-      RUN git clone https://github.com/jvns/pandas-cookbook.git /home/jovyan/Resources/Pandas_Cookbook
-      RUN git clone https://github.com/SethPaul/Pandas_Intro.git /home/jovyan/Utah_Data_Science_Pandas_Intro
+        RUN apt-get update
+        RUN apt-get -y install git-all pip
+        RUN git clone https://github.com/jonathanrocher/pandas_tutorial.git /home/jovyan/Resources/SciPy_2015-2016_Pandas_tutorial
+        RUN git clone https://github.com/jvns/pandas-cookbook.git /home/jovyan/Resources/Pandas_Cookbook
+        RUN git clone https://github.com/SethPaul/Pandas_Intro.git /home/jovyan/Utah_Data_Science_Pandas_Intro
+        RUN pip install requests-futures
 
-      RUN wget http://sethcpaul.com/wp-content/uploads/2016/09/Pandas-DataFrame-Notes.pdf -P /home/jovyan/Resources/
+        RUN wget http://sethcpaul.com/wp-content/uploads/2016/09/Pandas-DataFrame-Notes.pdf -P /home/jovyan/Resources/
 
-      USER $NB_USER
+        USER $NB_USER
 
-      WORKDIR /home/jovyan/
+        WORKDIR /home/jovyan/
 
 This gives the instructions used to build the image from the jupyter/all-spark-notebook as a base.
 
 ##### Building the image
-      docker build -t "utahds:dockerfile" .
+      docker build -t "utahds:pandas_intro" .
 
 ##### Running the applications
 
-      $ export TOKEN=$( head -c 30 /dev/urandom | xxd -p )
-Start up the proxy
+        $ export TOKEN=$( head -c 30 /dev/urandom | xxd -p )
+  Start up the proxy
 
-      $ docker run --net=host \
-  -d -e CONFIGPROXY_AUTH_TOKEN=$TOKEN \
-  --name=proxy jupyter/configurable-http-proxy \
-  --default-target http://127.0.0.1:9999
-Start up the new docker notebook image
+        $ docker run --net=host \
+    -d -e CONFIGPROXY_AUTH_TOKEN=$TOKEN \
+    --name=proxy jupyter/configurable-http-proxy \
+    --default-target http://127.0.0.1:9999
+  Start up the new docker notebook image
 
-    $ docker run --net=host -d \
+      $  docker run -d \
+      --net=host \
       -e CONFIGPROXY_AUTH_TOKEN=$TOKEN \
-      --name=tmpnb \
-      -v /var/run/docker.sock:/docker.sock jupyter/minimal-notebook
-
-    $  docker run -d \
-    --net=host \
-    -e CONFIGPROXY_AUTH_TOKEN=$TOKEN \
-    -v /var/run/docker.sock:/docker.sock \
-    jupyter/tmpnb \
-    python orchestrate.py --image='utahds:dockerfile' \
-        --command='start-notebook.sh \
-            "--NotebookApp.base_url={base_path} \
-            --ip=0.0.0.0 \
-            --port={port} \
-            --NotebookApp.trust_xheaders=True"'
+      -v /var/run/docker.sock:/docker.sock \
+      jupyter/tmpnb \
+      python orchestrate.py --image='utahds:dockerfile' \
+          --command='start-notebook.sh \
+              "--NotebookApp.base_url={base_path} \
+              --ip=0.0.0.0 \
+              --port={port} \
+              --NotebookApp.trust_xheaders=True"'
 
 ##### Should be up and running now
 check {your_ip}:8000
@@ -117,5 +113,4 @@ check {your_ip}:8000
 several command options available as seen at https://github.com/jupyter/tmpnb
 
 ## To stop and remove all containers
-      $ docker stop $(docker ps -a -q)
-      $ docker rm $(docker ps -a -q)
+      $ docker stop $(docker ps -a -q) && docker rm $(docker ps -a -q)
